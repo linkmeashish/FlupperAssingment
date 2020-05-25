@@ -83,7 +83,6 @@ public class AddProductActivity extends AppCompatActivity {
 
         CitychooserBinding mCitychooserBinding = DataBindingUtil.inflate(
                 dialog.getLayoutInflater(), R.layout.citychooser, null, false);
-
         mCitychooserBinding.okay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
