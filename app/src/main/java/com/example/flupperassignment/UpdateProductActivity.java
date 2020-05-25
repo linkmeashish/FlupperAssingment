@@ -1,76 +1,88 @@
 package com.example.flupperassignment;
 
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.view.WindowManager;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.bumptech.glide.Glide;
-import com.google.android.material.textfield.TextInputEditText;
+import com.example.flupperassignment.databinding.ActivityUpdateProductBinding;
+import com.example.flupperassignment.databinding.CitychooserBinding;
+import com.flask.colorpicker.ColorPickerView;
+import com.flask.colorpicker.OnColorSelectedListener;
+import com.flask.colorpicker.builder.ColorPickerClickListener;
+import com.flask.colorpicker.builder.ColorPickerDialogBuilder;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class UpdateProductActivity extends AppCompatActivity {
-
-    private ImageView mProductImage, mUpdatePhoto;
-    private TextInputEditText mProductName, mProductDescription, mProductRegularPrice, mProductSalesPrice;
-    private Button mUpdate;
     String filePath = null;
     Product product;
-
+    MyColorAdapter mMyColorAdapter;
+    MyCityAdapter mMyCityAdapter;
+    private ActivityUpdateProductBinding mActivityUpdateProductBinding;
+    private ArrayList<Color> mListOfColor;
+    private ArrayList<City> mListOfCity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_update_product);
+
+        mActivityUpdateProductBinding = DataBindingUtil.setContentView(this, R.layout.activity_update_product);
         product = getIntent().getParcelableExtra(ConstantVariables.PRODUCT);
+        mActivityUpdateProductBinding.setProduct(product);
         filePath = product.getProductPhoto();
-        init();
+
+        UpdateProductActivityClickHandlers mUpdateProductActivityClickHandlers = new UpdateProductActivityClickHandlers();
+        mActivityUpdateProductBinding.setClickHandlers(mUpdateProductActivityClickHandlers);
+
+        mListOfColor = new ArrayList<>();
+        mListOfColor.addAll(product.mColorList);
+
+        mListOfCity = new ArrayList<>();
+        mListOfCity.addAll(product.mCityList);
+
+        addAndSetColorandCityAdapter();
 
         Glide.with(UpdateProductActivity.this)
                 .load(Uri.parse(product.getProductPhoto()))
                 .centerCrop()
-                .into(mProductImage);
-        mProductName.setText(product.getName());
-        mProductDescription.setText(product.getDescription());
-        mProductRegularPrice.setText(product.getRegularPrice());
-        mProductSalesPrice.setText(product.getSalePrice());
+                .into(mActivityUpdateProductBinding.productImage);
+    }
 
-        mUpdatePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openGallery();
-            }
-        });
+    private void addAndSetColorandCityAdapter() {
+        mMyColorAdapter = new MyColorAdapter(mListOfColor, ConstantVariables.ADD_PRODUCT_PAGE);
+        mActivityUpdateProductBinding.setMyColorAdapter(mMyColorAdapter);
 
-        mUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent();
-                if (TextUtils.isEmpty(mProductName.getText()) || TextUtils.isEmpty(mProductDescription.getText())
-                        || TextUtils.isEmpty(mProductRegularPrice.getText()) || TextUtils.isEmpty(mProductSalesPrice.getText())
-                        || filePath == null) {
-                    setResult(RESULT_CANCELED, intent);
-                } else {
-                    intent.putExtra(ConstantVariables.EXTRA_PRODUCT_ID, product.getId());
-                    intent.putExtra(ConstantVariables.EXTRA_PRODUCT_NAME, mProductName.getText().toString());
-                    intent.putExtra(ConstantVariables.EXTRA_PRODUCT_DESCRIPTION, mProductDescription.getText().toString());
-                    intent.putExtra(ConstantVariables.EXTRA_PRODUCT_REGULAR_PRICE, mProductRegularPrice.getText().toString());
-                    intent.putExtra(ConstantVariables.EXTRA_PRODUCT_SALES_PRICE, mProductSalesPrice.getText().toString());
-                    intent.putExtra(ConstantVariables.EXTRA_PRODUCT_IMAGE, filePath);
-                    setResult(RESULT_OK, intent);
-                }
-                finish();
-            }
-        });
+        mMyCityAdapter = new MyCityAdapter(mListOfCity);
+        mActivityUpdateProductBinding.setMyCityAdapter(mMyCityAdapter);
+    }
+
+    private void setDataToMainActivity() {
+        Intent intent = new Intent();
+        Product newProduct = new Product(mActivityUpdateProductBinding.name.getText().toString(),
+                mActivityUpdateProductBinding.description.getText().toString(),
+                mActivityUpdateProductBinding.regularPrice.getText().toString(),
+                mActivityUpdateProductBinding.salesPrice.getText().toString(),
+                filePath);
+        newProduct.setId(product.getId());
+        newProduct.setColorList(mListOfColor);
+        newProduct.setCityList(mListOfCity);
+        mActivityUpdateProductBinding.setProduct(newProduct);
+        intent.putExtra(ConstantVariables.PRODUCT, newProduct);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     private void openGallery() {
@@ -80,17 +92,37 @@ public class UpdateProductActivity extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select an Image"), ConstantVariables.ACTIVITY_SELECT_IMAGE);
     }
 
-    private void init() {
-        mProductImage = findViewById(R.id.product_image);
-        mUpdatePhoto = findViewById(R.id.update_photo);
-        mProductName = findViewById(R.id.name);
-        mProductDescription = findViewById(R.id.description);
-        mProductRegularPrice = findViewById(R.id.regularPrice);
-        mProductSalesPrice = findViewById(R.id.salesPrice);
-        mUpdate = findViewById(R.id.save);
+    private void addColorToProduct() {
+        openDialogToChooseColor();
+    }
 
-        mProductImage.setVisibility(View.VISIBLE);
-        mUpdatePhoto.setVisibility(View.VISIBLE);
+    private void openDialogToChooseColor() {
+        ColorPickerDialogBuilder
+                .with(UpdateProductActivity.this)
+                .setTitle("Choose color")
+                .initialColor(R.color.colorAccent)
+                .wheelType(ColorPickerView.WHEEL_TYPE.FLOWER)
+                .density(12)
+                .setOnColorSelectedListener(new OnColorSelectedListener() {
+                    @Override
+                    public void onColorSelected(int selectedColor) {
+                    }
+                })
+                .setPositiveButton("ok", new ColorPickerClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int selectedColor, Integer[] allColors) {
+                        Color color = new Color(selectedColor);
+                        mListOfColor.add(color);
+                        mMyColorAdapter.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                })
+                .build()
+                .show();
     }
 
     @Override
@@ -98,7 +130,7 @@ public class UpdateProductActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            case 1234:
+            case ConstantVariables.ACTIVITY_SELECT_IMAGE:
                 if (resultCode == RESULT_OK) {
                     if (data != null && data.getData() != null) {
                         try {
@@ -107,7 +139,7 @@ public class UpdateProductActivity extends AppCompatActivity {
                                 Glide.with(UpdateProductActivity.this)
                                         .load(bitmap)
                                         .centerCrop()
-                                        .into(mProductImage);
+                                        .into(mActivityUpdateProductBinding.productImage);
                                 filePath = data.getData().toString();
                             }
 
@@ -116,6 +148,56 @@ public class UpdateProductActivity extends AppCompatActivity {
                         }
                     }
                 }
+        }
+    }
+
+    private void openDialogToEnterCity() {
+
+        Dialog dialog = new Dialog(UpdateProductActivity.this);
+
+        CitychooserBinding mCitychooserBinding = DataBindingUtil.inflate(
+                dialog.getLayoutInflater(), R.layout.citychooser, null, false);
+
+        mCitychooserBinding.okay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                City city = new City(mCitychooserBinding.city.getText().toString());
+                mListOfCity.add(city);
+                mMyCityAdapter.notifyDataSetChanged();
+                dialog.dismiss();
+            }
+        });
+
+        mCitychooserBinding.cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
+        int width = metrics.widthPixels;
+        dialog.setContentView(mCitychooserBinding.getRoot());
+        dialog.show();
+        dialog.getWindow().setLayout((6 * width) / 7, WindowManager.LayoutParams.WRAP_CONTENT);
+
+    }
+
+    public class UpdateProductActivityClickHandlers {
+        public void onUpdateButtonClicked(View view) {
+            setDataToMainActivity();
+        }
+
+        public void OnAddStoreButtonClicked(View view) {
+            openDialogToEnterCity();
+        }
+
+        public void onChangePhotoClicked(View view) {
+            openGallery();
+        }
+
+        public void OnAddColorButtonClicked(View view) {
+            addColorToProduct();
         }
     }
 }

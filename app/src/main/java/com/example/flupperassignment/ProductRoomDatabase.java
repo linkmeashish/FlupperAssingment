@@ -9,6 +9,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -19,7 +20,7 @@ abstract class ProductRoomDatabase extends RoomDatabase {
     static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
     private static volatile ProductRoomDatabase INSTANCE;
-    private static RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
+    private static Callback sRoomDatabaseCallback = new Callback() {
         @Override
         public void onOpen(@NonNull SupportSQLiteDatabase db) {
             super.onOpen(db);
@@ -32,6 +33,23 @@ abstract class ProductRoomDatabase extends RoomDatabase {
                             , "450"
                             , "400"
                             , Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.mackbook).toString());
+
+                    ArrayList<Color> mList = new ArrayList<>();
+                    Color color = new Color(2141568906);
+                    mList.add(color);
+                    color = new Color(2142800384);
+                    mList.add(color);
+                    product.setColorList(mList);
+
+                    ArrayList<City> mCityList = new ArrayList<>();
+                    City city = new City("Delhi");
+                    mCityList.add(city);
+                    city = new City("Chennai");
+                    mCityList.add(city);
+                    city = new City("Uttrakhand");
+                    mCityList.add(city);
+                    product.setCityList(mCityList);
+
                     dao.insert(product);
 
                     //Mocking 2nd Product
@@ -40,14 +58,53 @@ abstract class ProductRoomDatabase extends RoomDatabase {
                             , "250"
                             , "200"
                             , Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.phone).toString());
+
+                    mList.clear();
+                    color = new Color(2141568906);
+                    mList.add(color);
+
+                    color = new Color(2142800384);
+                    mList.add(color);
+
+                    product.setColorList(mList);
+
+
+                    mCityList.clear();
+                    city = new City("Delhi");
+                    mCityList.add(city);
+                    city = new City("Chennai");
+                    mCityList.add(city);
+                    city = new City("Uttrakhand");
+                    mCityList.add(city);
+                    product.setCityList(mCityList);
+
                     dao.insert(product);
 
                     //Mocking 3rd Product
-                    product = new Product( "I-Watch"
+                    product = new Product("I-Watch"
                             , "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum."
                             , "200"
                             , "150"
                             , Uri.parse("android.resource://" + R.class.getPackage().getName() + "/" + R.drawable.watch).toString());
+
+                    mList.clear();
+                    color = new Color(2141568906);
+                    mList.add(color);
+
+                    color = new Color(2142800384);
+                    mList.add(color);
+
+                    product.setColorList(mList);
+
+                    mCityList.clear();
+                    city = new City("Delhi");
+                    mCityList.add(city);
+                    city = new City("Chennai");
+                    mCityList.add(city);
+                    city = new City("Uttrakhand");
+                    mCityList.add(city);
+                    product.setCityList(mCityList);
+
                     dao.insert(product);
                 }
             });

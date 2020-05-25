@@ -7,31 +7,48 @@ import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import java.util.ArrayList;
 
 @Entity(tableName = "product_table")
 public class Product implements Comparable, Cloneable, Parcelable {
 
+    public static final Creator<Product> CREATOR = new Creator<Product>() {
+        @Override
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        @Override
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
+    @TypeConverters(Converters.class)
+    @NonNull
+    @ColumnInfo(name = "colorlist")
+    public ArrayList<Color> mColorList = new ArrayList<>();
+    @TypeConverters(Converters.class)
+    @NonNull
+    @ColumnInfo(name = "citylist")
+    public ArrayList<City> mCityList = new ArrayList<>();
     @PrimaryKey(autoGenerate = true)
     @NonNull
     @ColumnInfo(name = "id")
     private Integer mId;
-
     @NonNull
     @ColumnInfo(name = "name")
     private String mName;
-
     @NonNull
     @ColumnInfo(name = "description")
     private String mDescription;
-
     @NonNull
     @ColumnInfo(name = "regular_price")
     private String mRegularPrice;
-
     @NonNull
     @ColumnInfo(name = "sale_price")
     private String mSalePrice;
-
     @NonNull
     @ColumnInfo(name = "product_photo")
     private String mProductPhoto;
@@ -55,19 +72,9 @@ public class Product implements Comparable, Cloneable, Parcelable {
         mRegularPrice = in.readString();
         mSalePrice = in.readString();
         mProductPhoto = in.readString();
+        mColorList = in.createTypedArrayList(Color.CREATOR);
+        mCityList = in.createTypedArrayList(City.CREATOR);
     }
-
-    public static final Creator<Product> CREATOR = new Creator<Product>() {
-        @Override
-        public Product createFromParcel(Parcel in) {
-            return new Product(in);
-        }
-
-        @Override
-        public Product[] newArray(int size) {
-            return new Product[size];
-        }
-    };
 
     @NonNull
     public Integer getId() {
@@ -123,6 +130,24 @@ public class Product implements Comparable, Cloneable, Parcelable {
         this.mProductPhoto = mProductPhoto;
     }
 
+    @NonNull
+    public ArrayList<Color> getColorList() {
+        return mColorList;
+    }
+
+    public void setColorList(@NonNull ArrayList<Color> mColorList) {
+        this.mColorList = mColorList;
+    }
+
+    @NonNull
+    public ArrayList<City> getCityList() {
+        return mCityList;
+    }
+
+    public void setCityList(@NonNull ArrayList<City> mCityList) {
+        this.mCityList = mCityList;
+    }
+
     @Override
     public int compareTo(Object o) {
         Product product = (Product) o;
@@ -131,7 +156,9 @@ public class Product implements Comparable, Cloneable, Parcelable {
                 product.mDescription.equals(((Product) o).mDescription) &&
                 product.mRegularPrice.equals(((Product) o).mRegularPrice) &&
                 product.mSalePrice.equals(((Product) o).mSalePrice) &&
-                product.mProductPhoto.equals(((Product) o).mProductPhoto)) {
+                product.mProductPhoto.equals(((Product) o).mProductPhoto) &&
+                product.mColorList.equals(((Product) o).mColorList) &&
+                product.mCityList.equals(((Product) o).mCityList)) {
             return 0;
         }
         return 1;
@@ -168,5 +195,7 @@ public class Product implements Comparable, Cloneable, Parcelable {
         dest.writeString(mRegularPrice);
         dest.writeString(mSalePrice);
         dest.writeString(mProductPhoto);
+        dest.writeTypedList(mColorList);
+        dest.writeTypedList(mCityList);
     }
 }

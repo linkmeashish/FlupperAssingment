@@ -4,6 +4,10 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
+    dataBinding {
+        enabled = true
+    }
+
     defaultConfig {
         applicationId "com.example.flupperassignment"
         minSdkVersion 21
@@ -65,4 +69,10 @@ dependencies {
 
     //Caligraphy Library
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
+
+    //Gson Library
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+    //Color Picker
+    implementation 'com.github.QuadFlask:colorpicker:0.0.15'
 }

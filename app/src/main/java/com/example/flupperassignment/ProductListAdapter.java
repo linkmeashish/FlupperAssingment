@@ -4,28 +4,24 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.flupperassignment.databinding.ItemProductlistBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.ProductViewHolder> {
 
-    private final LayoutInflater mInflater;
     private ArrayList<Product> mProductList; // Cached copy of words
     private Context mContext;
 
     ProductListAdapter(Context context, ArrayList<Product> mProductList) {
-        mInflater = LayoutInflater.from(context);
         mContext = context;
         this.mProductList = mProductList;
     }
@@ -33,27 +29,15 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
     @NonNull
     @Override
     public ProductViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = mInflater.inflate(R.layout.recyclerview_item, parent, false);
-        return new ProductViewHolder(itemView);
+        LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+        ItemProductlistBinding mItemProductlistBinding = ItemProductlistBinding.inflate(layoutInflater, parent, false);
+        return new ProductViewHolder(mItemProductlistBinding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ProductViewHolder holder, int position) {
-        if (mProductList != null) {
-            Product product = mProductList.get(position);
-            holder.mName.setText(product.getName());
-            holder.mDescription.setText(product.getDescription());
-            holder.mRegularPrice.setText("₹ " + product.getRegularPrice());
-            holder.mRegularPrice.setPaintFlags(holder.mRegularPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            holder.mSalePrice.setText("₹ " + product.getSalePrice());
-
-            Glide.with(mContext)
-                    .load(Uri.parse(product.getProductPhoto()))
-                    .centerCrop()
-                    .override(200, 200)
-                    .into(holder.mProductImage);
-
-        }
+        Product product = mProductList.get(position);
+        holder.bind(product);
     }
 
     void setProduct(List<Product> products) {
@@ -71,16 +55,28 @@ public class ProductListAdapter extends RecyclerView.Adapter<ProductListAdapter.
     }
 
     class ProductViewHolder extends RecyclerView.ViewHolder {
-        private TextView mName, mDescription, mRegularPrice, mSalePrice;
-        private ImageView mProductImage;
+        private ItemProductlistBinding mItemProductlistBinding;
 
-        private ProductViewHolder(@NonNull View itemView) {
-            super(itemView);
-            mName = itemView.findViewById(R.id.product_title);
-            mDescription = itemView.findViewById(R.id.product_description);
-            mRegularPrice = itemView.findViewById(R.id.product_regularPrice);
-            mSalePrice = itemView.findViewById(R.id.product_salePrice);
-            mProductImage = itemView.findViewById(R.id.product_photo);
+        public ProductViewHolder(ItemProductlistBinding mItemProductlistBinding) {
+            super(mItemProductlistBinding.getRoot());
+            this.mItemProductlistBinding = mItemProductlistBinding;
+        }
+
+        public void bind(Product product) {
+            mItemProductlistBinding.setProduct(product);
+            mItemProductlistBinding.executePendingBindings();
+            mItemProductlistBinding.productRegularPrice
+                    .setPaintFlags(mItemProductlistBinding.productRegularPrice.getPaintFlags()
+                            | Paint.STRIKE_THRU_TEXT_FLAG);
+            Glide.with(mContext)
+                    .load(Uri.parse(product.getProductPhoto()))
+                    .centerCrop()
+                    .override(200, 200)
+                    .into(mItemProductlistBinding.productPhoto);
+            MyColorAdapter mMyColorAdapter = new MyColorAdapter(product.mColorList, ConstantVariables.PRODUCT_PAGE);
+            mItemProductlistBinding.setMyAdapter(mMyColorAdapter);
+            MyCityAdapter mMyCityAdapter = new MyCityAdapter(product.mCityList);
+            mItemProductlistBinding.setMyCityAdapter(mMyCityAdapter);
         }
     }
 }

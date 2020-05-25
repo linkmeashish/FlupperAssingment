@@ -1,7 +1,11 @@
 <resources>
     <string name="app_name">Assingment</string>
     <string name="add_product">Add Product</string>
+    <string name="chooseColor">Add Colors</string>
+    <string name="chooseCities">Add Cities</string>
     <string name="originalprice">Original Price </string>
     <string name="discountedprice">Offered Price </string>
     <string name="delete">DELETE</string>
+
+    <string name="entercity">Enter City</string>
 </resources>

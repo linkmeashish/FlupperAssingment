@@ -1,132 +1,230 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="@dimen/padding_small"
-    tools:context=".AddProductActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <data>
+        <variable
+            name="product"
+            type="com.example.flupperassignment.Product" />
+
+        <variable
+            name="clickHandlers"
+            type="com.example.flupperassignment.UpdateProductActivity.UpdateProductActivityClickHandlers" />
+
+        <variable
+            name="myColorAdapter"
+            type="com.example.flupperassignment.MyColorAdapter" />
+
+        <variable
+            name="myCityAdapter"
+            type="com.example.flupperassignment.MyCityAdapter" />
+
+        <import type="com.example.flupperassignment.Utils"/>
+    </data>
+
+
+    <ScrollView
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:padding="@dimen/padding_small"
+        tools:context=".AddProductActivity">
 
-        <RelativeLayout
-            android:id="@+id/layout_image"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="180dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" >
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:src="@drawable/mackbook"
-                android:layout_centerInParent="true"
-                android:id="@+id/product_image"
+            <RelativeLayout
+                android:id="@+id/layout_image"
                 android:layout_width="match_parent"
                 android:layout_height="180dp"
-                android:scaleType="centerCrop"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" >
 
-            <ImageView
-                android:layout_margin="@dimen/padding_5"
-                android:id="@+id/update_photo"
-                android:src="@drawable/ic_image_edit"
-                android:layout_width="50dp"
+                <ImageView
+                    android:layout_centerInParent="true"
+                    android:id="@+id/product_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:src="@{product.productPhoto}"
+                    android:scaleType="centerCrop"/>
+
+                <ImageView
+                    android:layout_margin="@dimen/padding_5"
+                    android:id="@+id/update_photo"
+                    android:src="@drawable/ic_image_edit"
+                    android:onClick="@{clickHandlers::onChangePhotoClicked}"
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"/>
+
+            </RelativeLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInput_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/padding_small"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/layout_image">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/name"
+                    android:text="@{product.name}"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Product Name"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInput_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/padding_small"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInput_name">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:text="@{product.description}"
+                    android:layout_height="wrap_content"
+                    android:hint="Product Description"
+                    android:inputType="text" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInput_regularPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/padding_small"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInput_description">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/regularPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{product.regularPrice}"
+                    android:hint="Product Price"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/textInput_salesPrice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/padding_small"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInput_regularPrice">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/salesPrice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{product.salePrice}"
+                    android:hint="Discounted Price"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <RelativeLayout
+                android:id="@+id/chooseColorLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/padding_small"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textInput_salesPrice">
+
+                <Button
+                    android:id="@+id/chooseColorButton"
+                    android:text="@string/chooseColor"
+                    android:background="@drawable/my_button_orange"
+                    android:backgroundTint="@color/holoorange"
+                    android:textColor="@android:color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:onClick="@{clickHandlers::OnAddColorButtonClicked}"
+                    android:layout_margin="@dimen/padding_small"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/colorRecyclerView"
+                    android:adapter="@{myColorAdapter}"
+                    android:layout_centerHorizontal="true"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/chooseColorButton"
+                    tools:listitem="@layout/item_color"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/chooseStoreLocaterLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/padding_small"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/chooseColorLayout">
+
+                <Button
+                    android:textAllCaps="false"
+                    android:id="@+id/chooseStoreLocatorButton"
+                    android:text="@string/chooseCities"
+                    android:background="@drawable/my_button_blue"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:textColor="@android:color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:onClick="@{clickHandlers::OnAddStoreButtonClicked}"
+                    android:layout_margin="@dimen/padding_small"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/storeRecyclerView"
+                    android:adapter="@{myCityAdapter}"
+                    android:layout_centerHorizontal="true"
+                    app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+                    app:spanCount="4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/chooseStoreLocatorButton"
+                    tools:listitem="@layout/item_city"/>
+
+            </RelativeLayout>
+
+
+            <Button
+                android:id="@+id/save"
+                android:layout_width="match_parent"
+                android:background="@drawable/my_button_red"
                 android:layout_height="50dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"/>
-
-        </RelativeLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInput_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/padding_small"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/layout_image">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Product Name"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInput_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/padding_small"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInput_name">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/description"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Product Description"
-                android:inputType="text" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginStart="@dimen/padding_small"
+                android:layout_marginLeft="@dimen/padding_small"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="@dimen/padding_small"
+                android:layout_marginRight="@dimen/padding_small"
+                android:backgroundTint="@color/holored"
+                android:textAllCaps="false"
+                android:onClick="@{clickHandlers::onUpdateButtonClicked}"
+                android:text="Update"
+                android:textColor="@android:color/white"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/chooseStoreLocaterLayout" />
 
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInput_regularPrice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/padding_small"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInput_description">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/regularPrice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Product Price"
-                android:inputType="numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/textInput_salesPrice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/padding_small"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInput_regularPrice">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/salesPrice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Discounted Price"
-                android:inputType="numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        <Button
-            android:id="@+id/save"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:layout_marginStart="@dimen/padding_small"
-            android:layout_marginLeft="@dimen/padding_small"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="@dimen/padding_small"
-            android:layout_marginRight="@dimen/padding_small"
-            android:backgroundTint="@color/holored"
-            android:textAllCaps="false"
-            android:text="Update"
-            android:textColor="@android:color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textInput_salesPrice" />
-
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-</ScrollView>
+    </ScrollView>
+</layout>

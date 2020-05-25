@@ -33,7 +33,8 @@ public class MyDiffUtilCallBack extends DiffUtil.Callback {
                 newList.get(newItemPosition).getDescription().equals(oldList.get(oldItemPosition).getDescription()) &&
                 newList.get(newItemPosition).getRegularPrice().equals(oldList.get(oldItemPosition).getRegularPrice()) &&
                 newList.get(newItemPosition).getSalePrice().equals(oldList.get(oldItemPosition).getSalePrice()) &&
-                newList.get(newItemPosition).getProductPhoto().equals(oldList.get(oldItemPosition).getProductPhoto()));
+                newList.get(newItemPosition).getProductPhoto().equals(oldList.get(oldItemPosition).getProductPhoto()) &&
+                newList.get(newItemPosition).getColorList().equals(oldList.get(oldItemPosition).getColorList()));
     }
 
     @Override
@@ -50,7 +51,7 @@ public class MyDiffUtilCallBack extends DiffUtil.Callback {
 
         Bundle diff = new Bundle();
 
-        if (newProductList.getId()==oldProductList.getId()) {
+        if (newProductList.getId() == oldProductList.getId()) {
             diff.putInt("id", newProductList.getId());
         }
         if (!newProductList.getName().equals(oldProductList.getName())) {
@@ -67,6 +68,9 @@ public class MyDiffUtilCallBack extends DiffUtil.Callback {
         }
         if (!newProductList.getProductPhoto().equals(oldProductList.getProductPhoto())) {
             diff.putString("product_photo", newProductList.getProductPhoto());
+        }
+        if (!newProductList.getColorList().equals(oldProductList.getColorList())) {
+            diff.putParcelableArrayList("colorlist", newProductList.getColorList());
         }
         if (diff.size() == 0) {
             return null;
